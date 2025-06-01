@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Student Result Predictor</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --accent-color: #8b5cf6;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--primary-gradient);
+        }
+
+        form {
+            padding: 30px;
+        }
+
+        .form-sections {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .form-sections {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-section {
+            padding: 20px;
+            background: rgba(249, 250, 251, 0.5);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-section h3 {
+            margin-bottom: 15px;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background-color: #fff;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-predict {
+            background: var(--secondary-gradient);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .result {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: var(--border-radius);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            form {
+                padding: 20px;
+            }
+            
+            .form-section {
+                padding: 15px;
+            }
+            
+            .btn-predict {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            form {
+                padding: 15px;
+            }
+            
+            .form-sections {
+                gap: 20px;
+            }
+            
+            .form-section h3 {
+                font-size: 1.1rem;
+            }
+            
+            input, select {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Result Predictor</h1>
+            <p>Enter student information to predict academic performance</p>
+        </div>
+        
+        <div class="card">
+            <form action="/predict" method="post">
+                <div class="form-sections">
+                    <div class="form-section">
+                        <h3>Academic Factors</h3>
+                        <div class="form-group">
+                            <label for="hours-studied">Hours Studied:</label>
+                            <input type="number" id="hours-studied" name="Hours_Studied" step="any" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="previous-scores">Previous Scores:</label>
+                            <input type="number" id="previous-scores" name="Previous_Scores" step="any" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tutoring-sessions">Tutoring Sessions:</label>
+                            <select id="tutoring-sessions" name="Tutoring_Sessions">
+                                <option value="0">0 (None)</option>
+                                <option value="1">1</option>
+                                <option value="2">2+</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="teacher-quality">Teacher Quality:</label>
+                            <select id="teacher-quality" name="Teacher_Quality_encoded">
+                                <option value="0">Poor</option>
+                                <option value="1">Average</option>
+                                <option value="2">Good</option>
+                                <option value="3">Excellent</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Personal Factors</h3>
+                        <div class="form-group">
+                            <label for="sleep-hours">Sleep Hours:</label>
+                            <input type="number" id="sleep-hours" name="Sleep_Hours" step="any" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="physical-activity">Physical Activity:</label>
+                            <select id="physical-activity" name="Physical_Activity">
+                                <option value="0">Low</option>
+                                <option value="1">Medium</option>
+                                <option value="2">High</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="motivation-level">Motivation Level:</label>
+                            <select id="motivation-level" name="Motivation_Level_encoded">
+                                <option value="0">Low</option>
+                                <option value="1">Medium</option>
+                                <option value="2">High</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="learning-disabilities">Learning Disabilities:</label>
+                            <select id="learning-disabilities" name="Learning_Disabilities_encoded">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Environmental Factors</h3>
+                        <div class="form-group">
+                            <label for="parental-involvement">Parental Involvement:</label>
+                            <select id="parental-involvement" name="Parental_Involvement_encoded">
+                                <option value="0">Low</option>
+                                <option value="1">Medium</option>
+                                <option value="2">High</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="access-to-resources">Access to Resources:</label>
+                            <select id="access-to-resources" name="Access_to_Resources_encoded">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                                <option value="2">High</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="internet-access">Internet Access:</label>
+                            <select id="internet-access" name="Internet_Access_encoded">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                                <option value="2">High</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="distance-from-home">Distance from Home:</label>
+                            <select id="distance-from-home" name="Distance_from_Home_encoded">
+                                <option value="0">Near</option>
+                                <option value="1">Moderate</option>
+                                <option value="2">Far</option>
+                                <option value="3">Very Far</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Social Factors</h3>
+                        <div class="form-group">
+                            <label for="extracurricular-activities">Extracurricular Activities:</label>
+                            <select id="extracurricular-activities" name="Extracurricular_Activities_encoded">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="peer-influence">Peer Influence:</label>
+                            <select id="peer-influence" name="Peer_Influence_encoded">
+                                <option value="0">Negative</option>
+                                <option value="1">Neutral</option>
+                                <option value="2">Positive</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="school-type">School Type:</label>
+                            <select id="school-type" name="School_Type_encoded">
+                                <option value="0">Public</option>
+                                <option value="1">Private</option>
+                                <option value="2">Charter</option>
+                                <option value="3">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="submit" class="btn-predict">Predict Results</button>
+                </div>
+            </form>
+            
+            {% if prediction_text %}
+                <div class="result">{{ prediction_text }}</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
